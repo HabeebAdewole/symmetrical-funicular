@@ -145,6 +145,13 @@
     -webkit-user-drag: none;
   }
 
+  /* Secrets (recovery phrase) never appear when printing or saving the page as a PDF */
+  @media print {
+    [data-sensitive] {
+      display: none !important;
+    }
+  }
+
   /* People who turn on "Reduce motion" in their phone settings get no slides or shakes */
   @media (prefers-reduced-motion: reduce) {
     *,
