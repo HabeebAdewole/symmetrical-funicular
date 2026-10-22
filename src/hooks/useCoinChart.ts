@@ -8,8 +8,8 @@ type ChartResult = {
   isFallback: boolean
 }
 
-/** Price history for one coin. `days` = '1' | '7' | '30' | '365'. */
-export function useCoinChart(id: string, days: ChartRange) {
+/** Price history for one coin. `days` = '1' | '7' | '30' | '365'. Pass enabled=false to skip fetching. */
+export function useCoinChart(id: string, days: ChartRange, enabled = true) {
   const currency = useWalletStore((state) => state.currency)
 
   return useQuery({
@@ -25,5 +25,7 @@ export function useCoinChart(id: string, days: ChartRange) {
     staleTime: 5 * 60_000,
     // While switching 7D → 30D, keep showing the old chart instead of flashing empty
     placeholderData: keepPreviousData,
+    // e.g. wait until we know the coin exists, so we never ask CoinGecko for a made-up id
+    enabled,
   })
 }

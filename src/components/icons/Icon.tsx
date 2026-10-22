@@ -87,6 +87,51 @@ const paths = {
     </>
   ),
   'chevron-left': <path d="M15 18l-6-6 6-6" />,
+  'chevron-down': <path d="M6 9l6 6 6-6" />,
+  search: (
+    <>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.5-3.5" />
+    </>
+  ),
+  share: (
+    <>
+      <path d="M12 3v12" />
+      <path d="M7 8l5-5 5 5" />
+      <path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" />
+    </>
+  ),
+  moon: <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />,
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3a14 14 0 0 1 0 18" />
+      <path d="M12 3a14 14 0 0 0 0 18" />
+    </>
+  ),
+  coins: (
+    <>
+      <circle cx="9" cy="9" r="6" />
+      <path d="M15.5 9.2a6 6 0 1 1-6.3 6.3" />
+    </>
+  ),
+  fingerprint: (
+    <>
+      <path d="M7 11a5 5 0 0 1 10 0v2" />
+      <path d="M12 11v4a7 7 0 0 1-1.5 4.3" />
+      <path d="M17 15a11 11 0 0 1-1 4" />
+      <path d="M7 14.5a12 12 0 0 1-.5 4" />
+      <path d="M4 9a8.5 8.5 0 0 1 16 0" />
+    </>
+  ),
+  info: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5" />
+      <path d="M12 8h.01" />
+    </>
+  ),
   'chevron-right': <path d="M9 18l6-6-6-6" />,
   check: <path d="M20 6L9 17l-5-5" />,
   shield: (

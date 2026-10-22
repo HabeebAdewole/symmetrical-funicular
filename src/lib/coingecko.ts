@@ -83,6 +83,31 @@ export function fetchMarkets(currency: FiatCurrency, ids: readonly string[] = SU
   })
 }
 
+/** Whole-market totals for the Market screen's stat cards */
+export type GlobalMarket = {
+  totalMarketCap: number
+  totalVolume: number
+  marketCapChange24h: number
+  volumeChange24h: number
+}
+
+export async function fetchGlobal(currency: FiatCurrency): Promise<GlobalMarket> {
+  const { data } = await request<{
+    data: {
+      total_market_cap: Record<string, number>
+      total_volume: Record<string, number>
+      market_cap_change_percentage_24h_usd: number
+      volume_change_percentage_24h_usd: number
+    }
+  }>('/global', {})
+  return {
+    totalMarketCap: data.total_market_cap[currency],
+    totalVolume: data.total_volume[currency],
+    marketCapChange24h: data.market_cap_change_percentage_24h_usd,
+    volumeChange24h: data.volume_change_percentage_24h_usd,
+  }
+}
+
 export async function fetchCoinChart(id: string, currency: FiatCurrency, days: ChartRange) {
   const data = await request<{ prices: PricePoint[] }>(`/coins/${id}/market_chart`, {
     vs_currency: currency,
