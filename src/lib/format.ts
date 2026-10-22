@@ -67,3 +67,16 @@ export function formatCompactNumber(value: number) {
     value,
   )
 }
+
+/** "$", "€", "£", "₦" for the user's currency (for the big amount input) */
+export function currencySymbol(currency: FiatCurrency) {
+  return (
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+      currencyDisplay: 'narrowSymbol',
+    })
+      .formatToParts(0)
+      .find((p) => p.type === 'currency')?.value ?? ''
+  )
+}

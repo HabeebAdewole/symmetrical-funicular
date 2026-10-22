@@ -42,7 +42,11 @@ type WalletActions = {
   /** Returns true if the PIN matched */
   unlock: (pin: string) => Promise<boolean>
   lock: () => void
+  /** Checks the PIN without changing anything (e.g. to approve a send) */
+  verifyPin: (pin: string) => Promise<boolean>
   addTransaction: (tx: Transaction) => void
+  /** Marks pending transactions older than `ageMs` as completed (simulated network confirmation) */
+  confirmPending: (ageMs: number) => void
   setCurrency: (currency: FiatCurrency) => void
   toggleHideBalances: () => void
   /** Wipes everything, back to Welcome */
@@ -108,12 +112,25 @@ export const useWalletStore = create<WalletState & WalletActions>()(
 
       lock: () => set({ isLocked: true }),
 
+      verifyPin: async (pin) => (await hashPin(pin)) === get().pinHash,
+
       addTransaction: (tx) =>
         set((state) => ({
           transactions: [tx, ...state.transactions],
           // Failed transactions don't move money
           holdings: tx.status === 'failed' ? state.holdings : applyToHoldings(state.holdings, tx),
         })),
+
+      confirmPending: (ageMs) => {
+        const cutoff = Date.now() - ageMs
+        // Only update the store if something actually changes (avoids pointless re-renders)
+        if (!get().transactions.some((t) => t.status === 'pending' && t.timestamp <= cutoff)) return
+        set((state) => ({
+          transactions: state.transactions.map((t) =>
+            t.status === 'pending' && t.timestamp <= cutoff ? { ...t, status: 'completed' } : t,
+          ),
+        }))
+      },
 
       setCurrency: (currency) => set({ currency }),
 

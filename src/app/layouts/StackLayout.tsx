@@ -1,7 +1,8 @@
 import { Outlet, useLocation } from 'react-router'
 import { PhoneFrame } from '@/app/layouts/PhoneFrame'
 
-export function OnboardingLayout() {
+// Full-screen screens with no tab bar (onboarding, Send, Receive). Each new screen slides in.
+export function StackLayout() {
   const { pathname } = useLocation()
 
   return (

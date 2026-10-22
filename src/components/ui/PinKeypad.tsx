@@ -5,13 +5,18 @@ type PinKeypadProps = {
   onDigit: (digit: string) => void
   onBackspace: () => void
   disabled?: boolean
+  /** Show a "." key bottom-left (amount entry) instead of an empty cell (PIN entry) */
+  decimal?: boolean
+  /** Shorter keys, for screens with more content above the pad */
+  compact?: boolean
 }
 
-const keyClass =
-  'flex h-16 items-center justify-center rounded-full text-h1 font-bold transition-colors active:bg-surface-raised disabled:opacity-40'
+const keyBase =
+  'flex items-center justify-center rounded-full text-h1 font-bold transition-colors active:bg-surface-raised disabled:opacity-40'
 
-/** 3×4 number pad. The empty bottom-left cell keeps 0 centred, like a phone dialler. */
-export function PinKeypad({ onDigit, onBackspace, disabled }: PinKeypadProps) {
+/** 3×4 number pad. The bottom-left cell is empty (PIN) or a decimal point (amounts), keeping 0 centred. */
+export function PinKeypad({ onDigit, onBackspace, disabled, decimal, compact }: PinKeypadProps) {
+  const keyClass = `${keyBase} ${compact ? 'h-13' : 'h-16'}`
   // A tiny buzz on every key press (Android), like a native keypad
   const press = (digit: string) => {
     haptics.tap()
@@ -35,7 +40,19 @@ export function PinKeypad({ onDigit, onBackspace, disabled }: PinKeypadProps) {
           {digit}
         </button>
       ))}
-      <span aria-hidden="true" />
+      {decimal ? (
+        <button
+          type="button"
+          className={keyClass}
+          disabled={disabled}
+          onClick={() => press('.')}
+          aria-label="Decimal point"
+        >
+          .
+        </button>
+      ) : (
+        <span aria-hidden="true" />
+      )}
       <button type="button" className={keyClass} disabled={disabled} onClick={() => press('0')}>
         0
       </button>
