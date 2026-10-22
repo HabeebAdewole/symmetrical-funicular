@@ -1,7 +1,7 @@
 // Fallback market data, used when CoinGecko is unreachable or rate-limited (HTTP 429).
 // Snapshot of real USD prices from 2026-10-22, with generated 7-day sparklines.
 
-import type { ChartRange, MarketCoin, PricePoint } from '@/lib/coingecko'
+import type { ChartRange, GlobalMarket, MarketCoin, PricePoint } from '@/lib/coingecko'
 import type { FiatCurrency } from '@/lib/format'
 import { hashString, randomWalk } from '@/lib/random'
 
@@ -217,4 +217,15 @@ export function getMockChart(id: string, currency: FiatCurrency, days: ChartRang
   const prices = randomWalk(hashString(id + days), points, endPrice, volatility)
   const now = Date.now()
   return prices.map((price, i) => [now - (points - 1 - i) * stepMs, price])
+}
+
+/** Whole-market totals snapshot (2026-10-22) for when /global is unavailable */
+export function getMockGlobal(currency: FiatCurrency): GlobalMarket {
+  const rate = USD_TO[currency]
+  return {
+    totalMarketCap: 2_737_422_100_658 * rate,
+    totalVolume: 82_933_309_794 * rate,
+    marketCapChange24h: -1.2,
+    volumeChange24h: 4.8,
+  }
 }

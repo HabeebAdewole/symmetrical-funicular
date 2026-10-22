@@ -35,8 +35,10 @@ export function formatCrypto(amount: number, symbol: string) {
 
 /** +2.19% / -0.87% — always signed so up/down is obvious */
 export function formatPercent(value: number) {
-  const sign = value > 0 ? '+' : ''
-  return `${sign}${value.toFixed(2)}%`
+  // Round first, so -0.001 shows as 0.00% instead of the odd-looking -0.00%
+  const rounded = Number(value.toFixed(2))
+  const sign = rounded > 0 ? '+' : ''
+  return `${sign}${(rounded === 0 ? 0 : rounded).toFixed(2)}%`
 }
 
 /** 0x71C7…976F — the start and end of an address are what people actually compare */
@@ -57,4 +59,11 @@ export function formatRelativeTime(date: Date | string | number, now = Date.now(
   const days = Math.round(hours / 24)
   if (days < 7) return `${days}d ago`
   return new Date(then).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+/** 20.1M, 1.2B — plain compact number (no currency), e.g. circulating supply */
+export function formatCompactNumber(value: number) {
+  return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(
+    value,
+  )
 }
