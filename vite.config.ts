@@ -26,7 +26,8 @@ export default defineConfig({
         orientation: 'portrait',
         start_url: '/',
         scope: '/',
-        background_color: '#F4F6F5', // splash screen
+        // Android's own launch splash: same emerald as our HTML splash, so the handoff is seamless
+        background_color: '#0E6B52',
         theme_color: '#0E6B52',
         categories: ['finance'],
         icons: [

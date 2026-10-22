@@ -32,15 +32,155 @@
           pref === 'dark' ||
           (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
         document.documentElement.dataset.theme = dark ? 'dark' : 'light'
-        document
-          .querySelector('meta[name="theme-color"]')
-          .setAttribute('content', dark ? '#0B0D0C' : '#F4F6F5')
       } catch {
         document.documentElement.dataset.theme = 'light'
       }
+      // While the splash shows, the phone's status bar matches its emerald (src/lib/splash.ts restores it)
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0E6B52')
     </script>
+    <!--
+      Splash screen styles live here (not in index.css) because they must work before any
+      JavaScript or the main stylesheet has loaded. That's the whole point of a splash.
+    -->
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        overflow: hidden;
+        background: #0e6b52;
+        color: #fff;
+        font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+        transition:
+          opacity 0.35s ease,
+          transform 0.35s ease;
+      }
+      #splash.splash--hide {
+        opacity: 0;
+        transform: scale(1.04);
+        pointer-events: none;
+      }
+      /* Same decorative shapes as the hero balance card */
+      #splash .glow {
+        position: absolute;
+        top: -18vmax;
+        right: -22vmax;
+        width: 60vmax;
+        height: 60vmax;
+        border-radius: 50%;
+        background: #0a4f3d;
+      }
+      #splash .ring {
+        position: absolute;
+        bottom: -14vmax;
+        left: -16vmax;
+        width: 40vmax;
+        height: 40vmax;
+        border: 2px solid #c6f432;
+        border-radius: 50%;
+        opacity: 0.35;
+      }
+      #splash .mark {
+        position: relative;
+        animation: splash-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      /* Each stroke of the K draws itself in, one after another */
+      #splash .mark path {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        animation: splash-draw 0.35s ease-out forwards;
+      }
+      #splash .mark path:nth-child(2) {
+        animation-delay: 0.3s;
+      }
+      #splash .mark path:nth-child(3) {
+        animation-delay: 0.45s;
+      }
+      #splash .mark path:nth-child(4) {
+        animation-delay: 0.55s;
+      }
+      #splash .name {
+        position: relative;
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        animation: splash-rise 0.5s 0.45s ease-out both;
+      }
+      #splash .tagline {
+        position: absolute;
+        bottom: max(env(safe-area-inset-bottom), 40px);
+        font-size: 13px;
+        opacity: 0.7;
+        animation: splash-rise 0.5s 0.6s ease-out both;
+      }
+      @keyframes splash-pop {
+        from {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+      }
+      @keyframes splash-draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes splash-rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash *,
+        #splash {
+          animation: none !important;
+          transition-duration: 0.01ms !important;
+        }
+        #splash .mark path {
+          stroke-dashoffset: 0;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="splash" aria-hidden="true">
+      <span class="glow"></span>
+      <span class="ring"></span>
+      <svg class="mark" width="96" height="96" viewBox="0 0 36 36">
+        <rect width="36" height="36" rx="11" fill="#C6F432" />
+        <path
+          d="M13 10v16"
+          pathLength="1"
+          fill="none"
+          stroke="#0B0D0C"
+          stroke-width="3.4"
+          stroke-linecap="round"
+        />
+        <path
+          d="M13 18l9-8"
+          pathLength="1"
+          fill="none"
+          stroke="#0B0D0C"
+          stroke-width="3.4"
+          stroke-linecap="round"
+        />
+        <path
+          d="M13 18l9 8"
+          pathLength="1"
+          fill="none"
+          stroke="#0B0D0C"
+          stroke-width="3.4"
+          stroke-linecap="round"
+        />
+      </svg>
+      <span class="name">Kova</span>
+      <span class="tagline">Your crypto, safely kept.</span>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
