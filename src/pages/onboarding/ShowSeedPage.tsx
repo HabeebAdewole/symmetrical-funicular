@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type SyntheticEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import { Icon } from '@/components/icons/Icon'
 import { Button } from '@/components/ui/Button'
@@ -7,8 +7,21 @@ import { Screen } from '@/components/ui/Screen'
 import { SeedWord } from '@/components/ui/SeedWord'
 import { StepProgress } from '@/components/ui/StepProgress'
 import { TopBar } from '@/components/ui/TopBar'
+import { useScreenPrivacy, type PrivacyRisk } from '@/hooks/useScreenPrivacy'
 import { cx } from '@/lib/cx'
+import { haptics } from '@/lib/haptics'
 import { useOnboardingStore } from '@/store/onboardingStore'
+
+// What the cover says after the words were hidden automatically
+const hiddenBecause: Record<PrivacyRisk, string> = {
+  background: 'Hidden because you left the app',
+  blur: 'Hidden because Kova lost focus',
+  screenshot: 'Screenshots aren’t safe. Write the words on paper instead.',
+  print: 'Printing your phrase isn’t allowed',
+}
+
+// Stops the words being copied or long-pressed into a "Copy" menu
+const block = (e: SyntheticEvent) => e.preventDefault()
 
 export default function ShowSeedPage() {
   const navigate = useNavigate()
@@ -16,6 +29,14 @@ export default function ShowSeedPage() {
   // Words start hidden: someone might be looking over your shoulder
   const [visible, setVisible] = useState(false)
   const [seenOnce, setSeenOnce] = useState(false)
+  const [hiddenReason, setHiddenReason] = useState<PrivacyRisk | null>(null)
+
+  // A web app can't block screenshots, so we hide the words at the moments a capture is likely
+  useScreenPrivacy((risk) => {
+    setVisible(false)
+    setHiddenReason(risk)
+    if (risk === 'screenshot') haptics.error()
+  }, visible)
 
   // Landed here directly (e.g. refreshed the page)? The draft is gone, so start again.
   if (!phrase) return <Navigate to="/onboarding/create" replace />
@@ -23,6 +44,7 @@ export default function ShowSeedPage() {
   const reveal = () => {
     setVisible(true)
     setSeenOnce(true)
+    setHiddenReason(null)
   }
 
   return (
@@ -55,9 +77,13 @@ export default function ShowSeedPage() {
         <ol
           aria-label="Recovery phrase"
           aria-hidden={!visible}
+          data-sensitive
+          onCopy={block}
+          onCut={block}
+          onContextMenu={block}
           className={cx(
-            'grid grid-cols-3 gap-3 transition-[filter] duration-300',
-            !visible && 'pointer-events-none blur-md select-none',
+            'grid grid-cols-3 gap-3 transition-[filter] duration-300 select-none',
+            !visible && 'pointer-events-none blur-md',
           )}
         >
           {phrase.map((word, i) => (
@@ -70,12 +96,12 @@ export default function ShowSeedPage() {
           <button
             type="button"
             onClick={reveal}
-            className="bg-surface/70 text-small absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-lg font-semibold backdrop-blur-sm"
+            className="bg-surface/70 text-small absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-lg px-6 text-center font-semibold backdrop-blur-sm"
           >
-            <Icon name="eye" />
-            Tap to reveal your phrase
+            <Icon name={hiddenReason ? 'shield' : 'eye'} />
+            {hiddenReason ? hiddenBecause[hiddenReason] : 'Tap to reveal your phrase'}
             <span className="text-caption text-text-muted font-normal">
-              Make sure no one is watching
+              {hiddenReason ? 'Tap to show it again' : 'Make sure no one is watching'}
             </span>
           </button>
         )}
