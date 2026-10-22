@@ -15,6 +15,7 @@ import { QuickAction } from '@/components/ui/QuickAction'
 import { SeedWord } from '@/components/ui/SeedWord'
 import { StepProgress } from '@/components/ui/StepProgress'
 import { TopBar } from '@/components/ui/TopBar'
+import { useInstallPrompt } from '@/hooks/useInstallPrompt'
 import { useMarkets } from '@/hooks/useMarkets'
 import { cx } from '@/lib/cx'
 import { formatFiat } from '@/lib/format'
@@ -106,6 +107,7 @@ export default function StyleGuidePage() {
   const [pin, setPin] = useState('')
   const [hidden, setHidden] = useState(false)
   const { data } = useMarkets()
+  const installPrompt = useInstallPrompt()
 
   return (
     <div className="mx-auto flex max-w-[720px] flex-col gap-12 px-5 py-10">
@@ -266,6 +268,22 @@ export default function StyleGuidePage() {
           Never share your phrase. Kova support will never ask for it.
         </NoticeCard>
         <NoticeCard>Demo only: no real money moves in Kova.</NoticeCard>
+      </Section>
+
+      <Section title="Install (PWA)">
+        {installPrompt.installed ? (
+          <NoticeCard>Kova is installed and running as an app.</NoticeCard>
+        ) : installPrompt.canInstall ? (
+          <Button icon="import" onClick={installPrompt.install}>
+            Install Kova
+          </Button>
+        ) : installPrompt.showIosHint ? (
+          <NoticeCard>On iPhone: tap Share, then “Add to Home Screen”.</NoticeCard>
+        ) : (
+          <NoticeCard>
+            Open Kova in Chrome on Android, or Safari on iPhone, to install it.
+          </NoticeCard>
+        )}
       </Section>
 
       <Link to="/" className="text-small text-primary font-semibold">

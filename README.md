@@ -41,6 +41,18 @@ npm run dev
 Then open http://localhost:5173. The wallet is designed for phone widths. On desktop it renders inside
 a centered phone-sized column. The admin back office lives at `/admin`.
 
+## Install it like an app (PWA)
+
+Kova is a Progressive Web App: open the deployed link on your phone and
+
+- **Android (Chrome):** tap **Install** when prompted, or ⋮ → **Add to Home screen**
+- **iPhone (Safari):** tap **Share** → **Add to Home Screen**
+
+It then launches full screen with its own icon, works offline (last known prices are cached),
+and updates itself in the background.
+
+> The service worker only runs in production builds. Use `npm run build && npm run preview` to test it locally.
+
 ## Scripts
 
 | Command           | What it does                                     |
