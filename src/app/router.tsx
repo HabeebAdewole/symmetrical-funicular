@@ -2,7 +2,7 @@ import type { ComponentType } from 'react'
 import { createBrowserRouter } from 'react-router'
 import { Gate } from '@/app/Gate'
 import { AdminLayout } from '@/app/layouts/AdminLayout'
-import { OnboardingLayout } from '@/app/layouts/OnboardingLayout'
+import { StackLayout } from '@/app/layouts/StackLayout'
 import { WalletLayout } from '@/app/layouts/WalletLayout'
 import { AppLoading } from '@/components/AppLoading'
 
@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
       // Living style guide (all design-system components, both themes)
       { path: '/ui', lazy: page(() => import('@/pages/dev/StyleGuidePage')) },
       {
-        element: <OnboardingLayout />,
+        element: <StackLayout />,
         children: [
           {
             // Only for people without a wallet
@@ -74,8 +74,6 @@ export const router = createBrowserRouter([
                 path: '/asset/:coinId',
                 lazy: page(() => import('@/pages/wallet/AssetDetailPage')),
               },
-              { path: '/send', lazy: page(() => import('@/pages/wallet/SendPage')) },
-              { path: '/receive', lazy: page(() => import('@/pages/wallet/ReceivePage')) },
               { path: '/swap', lazy: page(() => import('@/pages/wallet/SwapPage')) },
               { path: '/activity', lazy: page(() => import('@/pages/wallet/ActivityPage')) },
               { path: '/market', lazy: page(() => import('@/pages/wallet/MarketPage')) },
@@ -84,6 +82,14 @@ export const router = createBrowserRouter([
                 lazy: page(() => import('@/pages/wallet/NotificationsPage')),
               },
               { path: '/settings', lazy: page(() => import('@/pages/wallet/SettingsPage')) },
+            ],
+          },
+          {
+            // Full-screen flows inside the wallet: no tab bar, slide-in like onboarding
+            element: <StackLayout />,
+            children: [
+              { path: '/send', lazy: page(() => import('@/pages/wallet/SendPage')) },
+              { path: '/receive', lazy: page(() => import('@/pages/wallet/ReceivePage')) },
             ],
           },
         ],
