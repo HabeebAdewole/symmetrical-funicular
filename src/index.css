@@ -145,15 +145,11 @@
     -webkit-user-drag: none;
   }
 
-  /* Recharts makes charts focusable (keyboard arrows move the cursor). Hide the browser's default
-     outline for taps/clicks, but keep an on-brand ring for keyboard users. */
-  .recharts-wrapper:focus,
-  .recharts-surface:focus {
-    outline: none;
-  }
-  .recharts-surface:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+  /* Secrets (recovery phrase) never appear when printing or saving the page as a PDF */
+  @media print {
+    [data-sensitive] {
+      display: none !important;
+    }
   }
 
   /* People who turn on "Reduce motion" in their phone settings get no slides or shakes */
