@@ -27,9 +27,15 @@ export function formatCompactFiat(value: number, currency: FiatCurrency = 'usd')
   }).format(value)
 }
 
-/** 0.0512 BTC — trims trailing zeros, caps at 8 decimals (the satoshi) */
+/**
+ * 0.00307753 BTC · 18.6 SOL · 5,198.23 DOGE: decimals shrink as the amount grows.
+ * Small amounts keep up to 8 decimals (the satoshi); big ones don't need them.
+ * Trailing zeros are trimmed.
+ */
 export function formatCrypto(amount: number, symbol: string) {
-  const formatted = new Intl.NumberFormat('en-US', { maximumFractionDigits: 8 }).format(amount)
+  const abs = Math.abs(amount)
+  const maximumFractionDigits = abs >= 1000 ? 2 : abs >= 1 ? 4 : 8
+  const formatted = new Intl.NumberFormat('en-US', { maximumFractionDigits }).format(amount)
   return `${formatted} ${symbol.toUpperCase()}`
 }
 

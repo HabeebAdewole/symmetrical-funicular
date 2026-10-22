@@ -32,6 +32,10 @@ type WalletState = {
   transactions: Transaction[]
   currency: FiatCurrency
   hideBalances: boolean
+  /** When this wallet was created/imported (ms). Notifications from before this count as already read. */
+  createdAt: number
+  /** Ids of notifications the user has seen (notifications themselves are derived, see useNotifications) */
+  readNotificationIds: string[]
 }
 
 type WalletActions = {
@@ -49,6 +53,7 @@ type WalletActions = {
   confirmPending: (ageMs: number) => void
   setCurrency: (currency: FiatCurrency) => void
   toggleHideBalances: () => void
+  markNotificationsRead: (ids: string[]) => void
   /** Wipes everything, back to Welcome */
   reset: () => void
 }
@@ -62,6 +67,8 @@ const initialState: WalletState = {
   transactions: [],
   currency: 'usd',
   hideBalances: false,
+  createdAt: 0,
+  readNotificationIds: [],
 }
 
 /** Applies a transaction to balances (send = minus amount + fee, receive = plus, swap = both sides) */
@@ -94,6 +101,8 @@ export const useWalletStore = create<WalletState & WalletActions>()(
           seedPhrase,
           holdings: STARTER_HOLDINGS,
           transactions: createStarterTransactions(seedPhrase),
+          createdAt: Date.now(),
+          readNotificationIds: [],
         }),
 
       // Importing behaves the same in the demo: the phrase deterministically seeds the history
@@ -135,6 +144,12 @@ export const useWalletStore = create<WalletState & WalletActions>()(
       setCurrency: (currency) => set({ currency }),
 
       toggleHideBalances: () => set((state) => ({ hideBalances: !state.hideBalances })),
+
+      markNotificationsRead: (ids) =>
+        set((state) => ({
+          // A Set removes duplicates; keep only the newest 200 so storage never grows forever
+          readNotificationIds: [...new Set([...ids, ...state.readNotificationIds])].slice(0, 200),
+        })),
 
       reset: () => set(initialState),
     }),

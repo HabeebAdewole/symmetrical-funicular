@@ -8,6 +8,7 @@ import { CoinRow } from '@/components/ui/CoinRow'
 import { HeroBalanceCard } from '@/components/ui/HeroBalanceCard'
 import { QuickAction } from '@/components/ui/QuickAction'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useNotifications } from '@/hooks/useNotifications'
 import { usePortfolio } from '@/hooks/usePortfolio'
 import { usePortfolioHistory } from '@/hooks/usePortfolioHistory'
 import { cx } from '@/lib/cx'
@@ -27,7 +28,7 @@ export default function HomePage() {
   const currency = useWalletStore((s) => s.currency)
   const hideBalances = useWalletStore((s) => s.hideBalances)
   const toggleHideBalances = useWalletStore((s) => s.toggleHideBalances)
-  const hasPending = useWalletStore((s) => s.transactions.some((t) => t.status === 'pending'))
+  const { unreadCount } = useNotifications()
   const displayName = usePreferencesStore((s) => s.displayName)
   const portfolio = usePortfolio()
   const history = usePortfolioHistory()
@@ -39,7 +40,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-5 px-5 pt-3 pb-4">
-      <HomeHeader name={displayName} hasUnread={hasPending} />
+      <HomeHeader name={displayName} hasUnread={unreadCount > 0} />
 
       {portfolio.isLoading ? (
         <Skeleton className="h-37 rounded-xl" />

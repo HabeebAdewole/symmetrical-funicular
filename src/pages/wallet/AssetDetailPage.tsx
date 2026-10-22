@@ -9,7 +9,8 @@ import { TopBar } from '@/components/ui/TopBar'
 import { TransactionRow } from '@/components/ui/TransactionRow'
 import { buttonStyles } from '@/components/ui/buttonStyles'
 import { useCoinChart } from '@/hooks/useCoinChart'
-import { useMarketCoin, useMarkets } from '@/hooks/useMarkets'
+import { useMarketLookup } from '@/hooks/useMarketLookup'
+import { useMarketCoin } from '@/hooks/useMarkets'
 import type { ChartRange, PricePoint } from '@/lib/coingecko'
 import { cx } from '@/lib/cx'
 import {
@@ -35,7 +36,7 @@ export default function AssetDetailPage() {
   const holdings = useWalletStore((s) => s.holdings)
   const transactions = useWalletStore((s) => s.transactions)
   const { coin, isLoading } = useMarketCoin(coinId)
-  const markets = useMarkets()
+  const { symbols, usdRate } = useMarketLookup()
   const [range, setRange] = useState<ChartRange>('7')
   const chart = useCoinChart(coinId, range, !!coin)
   const [scrub, setScrub] = useState<PricePoint | null>(null)
@@ -46,11 +47,6 @@ export default function AssetDetailPage() {
   const change = rangeChange ?? coin?.price_change_percentage_24h ?? 0
   const up = change >= 0
 
-  // Mock transactions store USD values; USDC's price in the chosen currency is the USD exchange rate
-  const usdRate = markets.data?.coins.find((c) => c.id === 'usd-coin')?.current_price ?? 1
-  const symbols = Object.fromEntries(
-    (markets.data?.coins ?? []).map((c) => [c.id, c.symbol.toUpperCase()]),
-  )
   const recent = transactions
     .filter((t) => t.coinId === coinId || t.toCoinId === coinId)
     .slice(0, 3)
