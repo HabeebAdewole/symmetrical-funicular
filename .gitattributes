@@ -1,0 +1,2 @@
+# Store all text files with LF line endings in the repo (avoids Windows CRLF noise in diffs)
+* text=auto eol=lf
