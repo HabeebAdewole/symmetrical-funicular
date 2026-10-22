@@ -7,6 +7,7 @@ import {
   shortenAddress,
   type FiatCurrency,
 } from '@/lib/format'
+import { transactionTitle } from '@/lib/transactions'
 import type { Transaction, TransactionStatus } from '@/mocks/wallet'
 
 const typeIcon: Record<Transaction['type'], IconName> = {
@@ -27,25 +28,37 @@ type TransactionRowProps = {
   currency: FiatCurrency
   /** Converts the stored USD value into the user's currency */
   usdRate?: number
+  /** Makes the row tappable (opens the detail sheet) */
+  onClick?: () => void
 }
 
 /** One line of history (Figma: Transaction Row). Received amounts are green; pending/failed get a badge. */
-export function TransactionRow({ tx, symbols, currency, usdRate = 1 }: TransactionRowProps) {
+export function TransactionRow({
+  tx,
+  symbols,
+  currency,
+  usdRate = 1,
+  onClick,
+}: TransactionRowProps) {
   const sym = (id?: string) => (id ? (symbols[id] ?? id.toUpperCase()) : '')
-  const title =
-    tx.type === 'send'
-      ? `Sent ${sym(tx.coinId)}`
-      : tx.type === 'receive'
-        ? `Received ${sym(tx.coinId)}`
-        : `Swapped ${sym(tx.coinId)} → ${sym(tx.toCoinId)}`
+  const title = transactionTitle(tx, symbols)
   const detail =
     tx.type === 'swap'
       ? `Got ${formatCrypto(tx.toAmount ?? 0, sym(tx.toCoinId))}`
       : `${tx.type === 'send' ? 'To' : 'From'} ${shortenAddress(tx.counterparty ?? '')}`
   const sign = tx.type === 'receive' ? '+' : '−'
 
+  const Wrapper = onClick ? 'button' : 'div'
+
   return (
-    <div className="flex items-center gap-3 py-3">
+    <Wrapper
+      type={onClick ? 'button' : undefined}
+      onClick={onClick}
+      className={cx(
+        'flex w-full items-center gap-3 py-3 text-left',
+        onClick && 'active:bg-surface-raised -mx-2 rounded-md px-2 transition-colors',
+      )}
+    >
       <span className="bg-surface-raised flex size-10 shrink-0 items-center justify-center rounded-full">
         <Icon name={typeIcon[tx.type]} size={20} />
       </span>
@@ -82,6 +95,6 @@ export function TransactionRow({ tx, symbols, currency, usdRate = 1 }: Transacti
           </span>
         )}
       </span>
-    </div>
+    </Wrapper>
   )
 }
