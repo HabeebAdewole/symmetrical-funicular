@@ -8,15 +8,11 @@ import { PinConfirmSheet } from '@/components/wallet/PinConfirmSheet'
 import { useMarketCoin, useMarkets } from '@/hooks/useMarkets'
 import { useWalletAddress } from '@/hooks/useWalletAddress'
 import { haptics } from '@/lib/haptics'
+import { newTransactionMeta } from '@/lib/transactions'
 import { feeInCoin, networkOf } from '@/lib/networks'
 import { useWalletStore } from '@/store/walletStore'
 
 type Step = 'recipient' | 'amount' | 'review' | 'success'
-
-const randomHex = (bytes: number) =>
-  Array.from(crypto.getRandomValues(new Uint8Array(bytes)), (b) =>
-    b.toString(16).padStart(2, '0'),
-  ).join('')
 
 /**
  * Send flow (Figma Send 1–4). One route, four steps: the page keeps the draft (coin, address, amount)
@@ -56,9 +52,9 @@ export default function SendPage() {
   const symbol = coin?.symbol.toUpperCase() ?? ''
 
   const send = () => {
-    const id = `tx_${randomHex(5)}`
+    const meta = newTransactionMeta()
     addTransaction({
-      id,
+      ...meta,
       type: 'send',
       coinId,
       amount,
@@ -66,11 +62,9 @@ export default function SendPage() {
       valueUsd: amount * usdPrice,
       counterparty: to.trim(),
       status: 'pending', // the confirmation simulator flips this to completed after ~20s
-      timestamp: Date.now(),
-      hash: `0x${randomHex(32)}`,
     })
     haptics.success()
-    setTxId(id)
+    setTxId(meta.id)
     setPinOpen(false)
     setStep('success')
   }
