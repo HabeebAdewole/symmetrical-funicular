@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { createBrowserRouter } from 'react-router'
+import { Gate } from '@/app/Gate'
 import { AdminLayout } from '@/app/layouts/AdminLayout'
 import { OnboardingLayout } from '@/app/layouts/OnboardingLayout'
 import { WalletLayout } from '@/app/layouts/WalletLayout'
@@ -21,37 +22,74 @@ export const router = createBrowserRouter([
       {
         element: <OnboardingLayout />,
         children: [
-          { path: '/welcome', lazy: page(() => import('@/pages/onboarding/WelcomePage')) },
           {
-            path: '/onboarding',
+            // Only for people without a wallet
+            element: <Gate allow="new" />,
             children: [
-              { path: 'create', lazy: page(() => import('@/pages/onboarding/CreateWalletPage')) },
-              { path: 'seed', lazy: page(() => import('@/pages/onboarding/ShowSeedPage')) },
+              { path: '/welcome', lazy: page(() => import('@/pages/onboarding/WelcomePage')) },
               {
-                path: 'seed/confirm',
+                path: '/onboarding/create',
+                lazy: page(() => import('@/pages/onboarding/CreateWalletPage')),
+              },
+              {
+                path: '/onboarding/seed',
+                lazy: page(() => import('@/pages/onboarding/ShowSeedPage')),
+              },
+              {
+                path: '/onboarding/seed/confirm',
                 lazy: page(() => import('@/pages/onboarding/ConfirmSeedPage')),
               },
-              { path: 'import', lazy: page(() => import('@/pages/onboarding/ImportWalletPage')) },
-              { path: 'pin', lazy: page(() => import('@/pages/onboarding/SetPinPage')) },
+              {
+                path: '/onboarding/import',
+                lazy: page(() => import('@/pages/onboarding/ImportWalletPage')),
+              },
+            ],
+          },
+          {
+            element: <Gate allow="needsPin" />,
+            children: [
+              {
+                path: '/onboarding/pin',
+                lazy: page(() => import('@/pages/onboarding/SetPinPage')),
+              },
+            ],
+          },
+          {
+            element: <Gate allow="locked" />,
+            children: [
+              { path: '/unlock', lazy: page(() => import('@/pages/onboarding/UnlockPage')) },
             ],
           },
         ],
       },
       {
-        element: <WalletLayout />,
+        // The wallet itself: only when set up and unlocked
+        element: <Gate allow="unlocked" />,
         children: [
-          { index: true, lazy: page(() => import('@/pages/wallet/HomePage')) },
-          { path: '/asset/:coinId', lazy: page(() => import('@/pages/wallet/AssetDetailPage')) },
-          { path: '/send', lazy: page(() => import('@/pages/wallet/SendPage')) },
-          { path: '/receive', lazy: page(() => import('@/pages/wallet/ReceivePage')) },
-          { path: '/swap', lazy: page(() => import('@/pages/wallet/SwapPage')) },
-          { path: '/activity', lazy: page(() => import('@/pages/wallet/ActivityPage')) },
-          { path: '/market', lazy: page(() => import('@/pages/wallet/MarketPage')) },
-          { path: '/notifications', lazy: page(() => import('@/pages/wallet/NotificationsPage')) },
-          { path: '/settings', lazy: page(() => import('@/pages/wallet/SettingsPage')) },
+          {
+            element: <WalletLayout />,
+            children: [
+              { index: true, lazy: page(() => import('@/pages/wallet/HomePage')) },
+              {
+                path: '/asset/:coinId',
+                lazy: page(() => import('@/pages/wallet/AssetDetailPage')),
+              },
+              { path: '/send', lazy: page(() => import('@/pages/wallet/SendPage')) },
+              { path: '/receive', lazy: page(() => import('@/pages/wallet/ReceivePage')) },
+              { path: '/swap', lazy: page(() => import('@/pages/wallet/SwapPage')) },
+              { path: '/activity', lazy: page(() => import('@/pages/wallet/ActivityPage')) },
+              { path: '/market', lazy: page(() => import('@/pages/wallet/MarketPage')) },
+              {
+                path: '/notifications',
+                lazy: page(() => import('@/pages/wallet/NotificationsPage')),
+              },
+              { path: '/settings', lazy: page(() => import('@/pages/wallet/SettingsPage')) },
+            ],
+          },
         ],
       },
       {
+        // Back office: separate audience, never guarded by the wallet
         path: '/admin',
         element: <AdminLayout />,
         children: [

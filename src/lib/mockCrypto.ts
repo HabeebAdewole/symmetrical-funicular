@@ -44,10 +44,17 @@ export const DEMO_WORDS = [
   'jackal', 'lemur', 'magpie', 'marten', 'moose', 'osprey', 'pelican', 'pigeon',
 ]
 
-/** 12 random words. Uses the browser's secure RNG (overkill for a demo, but it's the right habit). */
+/**
+ * 12 random, all-different words. Uses the browser's secure RNG (overkill for a demo, but the right habit).
+ * Real BIP39 phrases can repeat a word; we avoid repeats so the "confirm your backup" quiz is never ambiguous.
+ */
 export function generateSeedPhrase(wordCount: 12 | 24 = 12): string[] {
-  const indexes = crypto.getRandomValues(new Uint8Array(wordCount))
-  return Array.from(indexes, (i) => DEMO_WORDS[i])
+  const chosen = new Set<string>()
+  while (chosen.size < wordCount) {
+    const [index] = crypto.getRandomValues(new Uint8Array(1))
+    chosen.add(DEMO_WORDS[index]) // a Set ignores duplicates, so we just draw again
+  }
+  return [...chosen]
 }
 
 export type SeedValidation = { ok: true; words: string[] } | { ok: false; error: string }

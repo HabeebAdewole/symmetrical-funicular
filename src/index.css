@@ -55,6 +55,23 @@
   --text-caption--line-height: 1rem;
   --text-caption--letter-spacing: 0.0125rem;
 
+  /* Screen enter: slight slide from the right + fade, like a native push → "animate-screen-in" */
+  --animate-screen-in: screen-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  @keyframes screen-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+
+  /* Bottom sheet slide-up → "animate-sheet-up" */
+  --animate-sheet-up: sheet-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+  }
+
   /* Wrong-PIN feedback → class "animate-shake" */
   --animate-shake: shake 0.4s ease-in-out;
   @keyframes shake {
@@ -126,6 +143,24 @@
 
   img {
     -webkit-user-drag: none;
+  }
+
+  /* People who turn on "Reduce motion" in their phone settings get no slides or shakes */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Swipeable rows (carousels) shouldn't show a scrollbar */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
