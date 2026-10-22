@@ -11,8 +11,11 @@ export default defineConfig({
     tailwindcss(),
     // Makes Kova an installable app (PWA): manifest + service worker
     VitePWA({
-      // New versions install silently and take over on the next launch
-      registerType: 'autoUpdate',
+      // A new version waits until the user taps "Update" (see UpdateBanner).
+      // We don't auto-reload: that could wipe someone halfway through backing up their phrase.
+      registerType: 'prompt',
+      // We register the service worker ourselves via useRegisterSW()
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Kova Wallet',
