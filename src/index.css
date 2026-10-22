@@ -1,34 +1,109 @@
 @import 'tailwindcss';
 
 /*
-  Kova design tokens (placeholder values from project-docs/brand/brand-brief.md).
-  Phase 1 replaces these with the final values from Figma.
-  Every token here becomes a Tailwind utility, e.g. --color-accent → bg-accent / text-accent.
+  Kova design tokens — mirrors the Figma file "Kova — Wallet App".
+  Variable names match the Figma variables' code syntax (color/primary → --color-primary).
+
+  Light values live in @theme (so Tailwind generates bg-primary, text-text-muted, etc.).
+  Dark mode re-assigns the same custom properties further down, so every utility switches automatically.
 */
 @theme {
-  --color-bg: #0b0d0c;
-  --color-surface: #151816;
-  --color-surface-raised: #1e2220;
-  --color-border: #2a2f2c;
-  --color-text: #f2f4f3;
-  --color-text-muted: #8a938e;
-  --color-accent: #c6f432;
-  --color-on-accent: #0b0d0c;
-  --color-positive: #3ddc97;
-  --color-negative: #ff5c5c;
-  --color-warning: #ffb547;
+  --color-bg: #f4f6f5;
+  --color-surface: #ffffff;
+  --color-surface-raised: #eef1ef;
+  --color-border: #e2e7e4;
+  --color-text: #0f1a16;
+  --color-text-muted: #5c6b65;
+  --color-primary: #0e6b52;
+  --color-on-primary: #ffffff;
+  --color-highlight: #c6f432;
+  --color-on-highlight: #0f1a16;
+  --color-hero-start: #0e6b52;
+  --color-hero-end: #0a4f3d;
+  --color-on-hero: #ffffff;
+  --color-positive: #13a36e;
+  --color-negative: #e5484d;
+  --color-warning: #d98a0b;
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
-  --radius-card: 1rem;
+  /* Figma radius/* */
+  --radius-sm: 0.5rem; /* 8 */
+  --radius-md: 0.75rem; /* 12 */
+  --radius-lg: 1rem; /* 16 */
+  --radius-xl: 1.5rem; /* 24 */
+
+  /* Figma effect styles */
+  --shadow-card: 0 4px 16px rgb(15 26 22 / 0.06);
+  --shadow-hero: 0 12px 32px -8px rgb(14 107 82 / 0.25);
+
+  /* Figma text styles: Display / H1 / H2 / Body / Small / Caption */
+  --text-display: 2rem;
+  --text-display--line-height: 2.5rem;
+  --text-display--letter-spacing: -0.03125rem;
+  --text-h1: 1.5rem;
+  --text-h1--line-height: 2rem;
+  --text-h1--letter-spacing: -0.01875rem;
+  --text-h2: 1.25rem;
+  --text-h2--line-height: 1.75rem;
+  --text-h2--letter-spacing: -0.0125rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.25rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-caption--letter-spacing: 0.0125rem;
+
+  /* Wrong-PIN feedback → class "animate-shake" */
+  --animate-shake: shake 0.4s ease-in-out;
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20%,
+    60% {
+      transform: translateX(-8px);
+    }
+    40%,
+    80% {
+      transform: translateX(8px);
+    }
+  }
 }
 
-html,
-body,
-#root {
-  min-height: 100%;
+/* Dark palette. useApplyTheme() sets data-theme on <html> (resolving "system" via the OS setting). */
+@layer base {
+  [data-theme='dark'] {
+    --color-bg: #0b0d0c;
+    --color-surface: #151816;
+    --color-surface-raised: #1e2220;
+    --color-border: #2a2f2c;
+    --color-text: #f2f4f3;
+    --color-text-muted: #8a938e;
+    --color-primary: #c6f432;
+    --color-on-primary: #0b0d0c;
+    --color-on-highlight: #0b0d0c;
+    --color-positive: #3ddc97;
+    --color-negative: #ff5c5c;
+    --color-warning: #ffb547;
+    --shadow-card: none;
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+  }
 }
 
-body {
-  @apply bg-bg text-text font-sans antialiased;
+/* `numeric` keeps digits equal-width so balances don't jiggle when prices refresh */
+@utility numeric {
+  font-variant-numeric: tabular-nums;
 }

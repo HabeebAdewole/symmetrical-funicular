@@ -16,6 +16,8 @@ export const router = createBrowserRouter([
     // Root route: shown while the first page's code downloads
     HydrateFallback: AppLoading,
     children: [
+      // Living style guide (all design-system components, both themes)
+      { path: '/ui', lazy: page(() => import('@/pages/dev/StyleGuidePage')) },
       {
         element: <OnboardingLayout />,
         children: [
