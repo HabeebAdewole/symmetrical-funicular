@@ -10,6 +10,7 @@ export const pageMap = [
       { path: '/onboarding/seed/confirm', title: 'Confirm seed phrase' },
       { path: '/onboarding/import', title: 'Import wallet' },
       { path: '/onboarding/pin', title: 'Set PIN' },
+      { path: '/unlock', title: 'Unlock' },
     ],
   },
   {

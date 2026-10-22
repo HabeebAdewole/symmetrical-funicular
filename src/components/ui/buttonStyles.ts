@@ -1,12 +1,14 @@
 import { cx } from '@/lib/cx'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost'
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 
 // Figma: Button (Style=Primary|Secondary|Ghost, State=Default|Disabled)
 const variants: Record<ButtonVariant, string> = {
   primary: 'bg-primary text-on-primary',
   secondary: 'bg-surface-raised text-text',
   ghost: 'text-primary',
+  // Destructive actions (reset wallet). Same red in both themes.
+  danger: 'bg-negative text-white',
 }
 
 /**
