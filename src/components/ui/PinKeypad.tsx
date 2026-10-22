@@ -1,4 +1,5 @@
 import { Icon } from '@/components/icons/Icon'
+import { haptics } from '@/lib/haptics'
 
 type PinKeypadProps = {
   onDigit: (digit: string) => void
@@ -11,6 +12,16 @@ const keyClass =
 
 /** 3×4 number pad. The empty bottom-left cell keeps 0 centred, like a phone dialler. */
 export function PinKeypad({ onDigit, onBackspace, disabled }: PinKeypadProps) {
+  // A tiny buzz on every key press (Android), like a native keypad
+  const press = (digit: string) => {
+    haptics.tap()
+    onDigit(digit)
+  }
+  const remove = () => {
+    haptics.tap()
+    onBackspace()
+  }
+
   return (
     <div className="grid w-full grid-cols-3 gap-x-6 gap-y-3">
       {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
@@ -19,20 +30,20 @@ export function PinKeypad({ onDigit, onBackspace, disabled }: PinKeypadProps) {
           type="button"
           className={keyClass}
           disabled={disabled}
-          onClick={() => onDigit(digit)}
+          onClick={() => press(digit)}
         >
           {digit}
         </button>
       ))}
       <span aria-hidden="true" />
-      <button type="button" className={keyClass} disabled={disabled} onClick={() => onDigit('0')}>
+      <button type="button" className={keyClass} disabled={disabled} onClick={() => press('0')}>
         0
       </button>
       <button
         type="button"
         className={keyClass}
         disabled={disabled}
-        onClick={onBackspace}
+        onClick={remove}
         aria-label="Delete last digit"
       >
         <Icon name="backspace" />

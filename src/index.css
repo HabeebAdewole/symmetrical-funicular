@@ -100,7 +100,41 @@
 
   body {
     @apply bg-bg text-text font-sans antialiased;
+    /* No rubber-band bounce / pull-to-refresh: the app shouldn't drag like a web page */
+    overscroll-behavior: none;
+    /* Stop iOS enlarging text when the phone rotates */
+    -webkit-text-size-adjust: 100%;
   }
+
+  /* --- Native feel --- */
+  * {
+    /* Remove the grey/blue flash browsers draw on tapped elements */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  a,
+  label,
+  [role='button'] {
+    /* Removes the double-tap-to-zoom delay, so taps register instantly */
+    touch-action: manipulation;
+    /* Long-pressing a button shouldn't select its text or open a callout */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+/* Safe areas: padding that keeps content clear of the notch / Dynamic Island and the home bar */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* `numeric` keeps digits equal-width so balances don't jiggle when prices refresh */
