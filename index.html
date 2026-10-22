@@ -9,7 +9,25 @@
       name="description"
       content="Kova — a mobile-first crypto wallet demo with live prices. All funds are mocked."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <title>Kova Wallet</title>
+    <script>
+      // Set the theme before React loads, so dark-mode users never see a white flash
+      try {
+        const pref = JSON.parse(localStorage.getItem('kova-preferences'))?.state?.theme ?? 'system'
+        const dark =
+          pref === 'dark' ||
+          (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+      } catch {
+        document.documentElement.dataset.theme = 'light'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

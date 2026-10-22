@@ -27,6 +27,10 @@ export const pageMap = [
     ],
   },
   {
+    group: 'Design system',
+    pages: [{ path: '/ui', title: 'Style guide' }],
+  },
+  {
     group: 'Admin',
     pages: [
       { path: '/admin', title: 'Overview' },
