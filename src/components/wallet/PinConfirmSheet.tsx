@@ -11,9 +11,11 @@ type PinConfirmSheetProps = {
   /** Called once the right PIN is entered */
   onConfirmed: () => void
   title?: string
+  /** Shown above the keypad, e.g. a warning about what confirming will do */
+  message?: string
 }
 
-function PinConfirmBody({ onConfirmed }: { onConfirmed: () => void }) {
+function PinConfirmBody({ onConfirmed, message }: { onConfirmed: () => void; message?: string }) {
   const verifyPin = useWalletStore((s) => s.verifyPin)
   const [wrong, setWrong] = useState(false)
 
@@ -29,7 +31,7 @@ function PinConfirmBody({ onConfirmed }: { onConfirmed: () => void }) {
   return (
     <div className="flex flex-col items-center gap-6">
       <p aria-live="polite" className={wrong ? 'text-negative' : 'text-text-muted'}>
-        {wrong ? 'Wrong PIN. Try again.' : 'Enter your PIN to approve this.'}
+        {wrong ? 'Wrong PIN. Try again.' : (message ?? 'Enter your PIN to approve this.')}
       </p>
       <PinDots filled={pin.value.length} error={pin.error} />
       <PinKeypad onDigit={pin.add} onBackspace={pin.remove} disabled={pin.busy} compact />
@@ -43,11 +45,12 @@ export function PinConfirmSheet({
   onClose,
   onConfirmed,
   title = 'Confirm with PIN',
+  message,
 }: PinConfirmSheetProps) {
   return (
     <BottomSheet open={open} onClose={onClose} title={title}>
       {/* Only mounted while open, so every opening starts with an empty PIN */}
-      {open && <PinConfirmBody onConfirmed={onConfirmed} />}
+      {open && <PinConfirmBody onConfirmed={onConfirmed} message={message} />}
     </BottomSheet>
   )
 }

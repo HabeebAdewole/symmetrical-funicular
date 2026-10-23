@@ -90,6 +90,14 @@ export const router = createBrowserRouter([
             children: [
               { path: '/send', lazy: page(() => import('@/pages/wallet/SendPage')) },
               { path: '/receive', lazy: page(() => import('@/pages/wallet/ReceivePage')) },
+              {
+                path: '/settings/pin',
+                lazy: page(() => import('@/pages/wallet/ChangePinPage')),
+              },
+              {
+                path: '/settings/recovery-phrase',
+                lazy: page(() => import('@/pages/wallet/RecoveryPhrasePage')),
+              },
             ],
           },
         ],

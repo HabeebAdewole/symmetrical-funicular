@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router'
 import { router } from '@/app/router'
 import { UpdateBanner } from '@/components/UpdateBanner'
 import { useApplyTheme } from '@/hooks/useApplyTheme'
+import { useAutoLock } from '@/hooks/useAutoLock'
 import { useConfirmationSimulator } from '@/hooks/useConfirmationSimulator'
 import { hideSplash } from '@/lib/splash'
 
@@ -22,6 +23,8 @@ export function App() {
   useApplyTheme()
   // Pending sends "confirm" after ~20s (does nothing when there's no wallet or nothing pending)
   useConfirmationSimulator()
+  // Settings → Auto-lock: ask for the PIN again after time away
+  useAutoLock()
 
   // Fade the splash out once the router has loaded the first real screen (not the loading spinner)
   useEffect(() => {
