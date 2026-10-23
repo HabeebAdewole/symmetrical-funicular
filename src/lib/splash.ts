@@ -1,7 +1,11 @@
 // Fades out the splash screen that index.html shows before any JavaScript runs.
 
-/** Long enough to see the K draw itself, short enough that nobody waits on purpose */
-const MIN_VISIBLE_MS = 1100
+/**
+ * How long the splash stays at least, from the moment the page starts loading.
+ * The animation (index.html) finishes at ~2.3s; this leaves a short beat on the finished logo before fading.
+ * Change this one number to make the splash longer or shorter.
+ */
+const MIN_VISIBLE_MS = 2900
 
 let hidden = false
 
@@ -23,6 +27,6 @@ export function hideSplash() {
     splash.classList.add('splash--hide')
     // Remove it from the page once the fade-out has finished
     splash.addEventListener('transitionend', () => splash.remove(), { once: true })
-    setTimeout(() => splash.remove(), 600) // safety net if transitionend never fires
+    setTimeout(() => splash.remove(), 800) // safety net if transitionend never fires
   }, wait)
 }
