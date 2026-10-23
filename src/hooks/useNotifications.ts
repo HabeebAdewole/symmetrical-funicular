@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { IconName } from '@/components/icons/Icon'
 import { useMarketLookup } from '@/hooks/useMarketLookup'
 import { formatCrypto, formatFiat } from '@/lib/format'
+import { usePreferencesStore } from '@/store/preferencesStore'
 import { useWalletStore } from '@/store/walletStore'
 
 export type Notification = {
@@ -31,6 +32,7 @@ export function useNotifications() {
   const currency = useWalletStore((s) => s.currency)
   const createdAt = useWalletStore((s) => s.createdAt)
   const readIds = useWalletStore((s) => s.readNotificationIds)
+  const priceAlerts = usePreferencesStore((s) => s.priceAlerts)
   const { coins, symbols, names, usdRate } = useMarketLookup()
 
   return useMemo(() => {
@@ -80,7 +82,8 @@ export function useNotifications() {
     // Price alerts for coins you hold (once per day)
     const today = new Date().toISOString().slice(0, 10)
     const alertTime = Math.max(new Date(new Date().setHours(0, 0, 0, 0)).getTime(), createdAt + 1) // never "before" the wallet existed
-    const movers = holdings
+    // Settings → Price alerts off: no price-move notifications at all
+    const movers = (priceAlerts ? holdings : [])
       .map((h) => coins.find((c) => c.id === h.coinId))
       .filter((c) => c && Math.abs(c.price_change_percentage_24h ?? 0) >= PRICE_ALERT_PERCENT)
       .map((c) => ({ coin: c!, change: c!.price_change_percentage_24h ?? 0 }))
@@ -130,5 +133,16 @@ export function useNotifications() {
       .map((n) => ({ ...n, unread: n.time > createdAt && !read.has(n.id) }))
 
     return { notifications: list, unreadCount: list.filter((n) => n.unread).length }
-  }, [transactions, holdings, currency, createdAt, readIds, coins, symbols, names, usdRate])
+  }, [
+    transactions,
+    holdings,
+    currency,
+    createdAt,
+    readIds,
+    priceAlerts,
+    coins,
+    symbols,
+    names,
+    usdRate,
+  ])
 }
